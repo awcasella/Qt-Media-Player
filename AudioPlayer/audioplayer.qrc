@@ -1,0 +1,9 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>imgs/spider.png</file>
+     <file>imgs/stop.png</file>
+     <file>imgs/pause.png</file>
+     <file>imgs/play.png</file>
+     <file>imgs/icon.png</file>
+ </qresource>
+ </RCC>
