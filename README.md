@@ -33,3 +33,7 @@ You can test it with the .mp3 file in this repo.
 
 # Built With
 - [Qt](https://www.qt.io): Cross platform software development for embedded systems.
+
+# Note
+
+Even though, the files inside project folder are called "AudioPlayer", they can reproduce video files as well.
