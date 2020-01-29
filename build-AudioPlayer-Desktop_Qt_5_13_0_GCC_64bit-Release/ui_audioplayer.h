@@ -17,11 +17,8 @@
 #include <QtWidgets/QLCDNumber>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
-#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSlider>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QToolBar>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -34,24 +31,22 @@ public:
     QWidget *centralWidget;
     QWidget *layoutWidget;
     QFormLayout *formLayout;
-    QLCDNumber *lcd;
-    QProgressBar *progressBar;
     QPushButton *bt_stop;
     QPushButton *bt_play;
+    QLCDNumber *lcd;
+    QSlider *sl_tracking;
     QLabel *lb_screen;
     QSlider *sl_volume;
     QLabel *label;
     QPushButton *bt_load;
-    QToolBar *mainToolBar;
-    QStatusBar *statusBar;
 
     void setupUi(QMainWindow *AudioPlayer)
     {
         if (AudioPlayer->objectName().isEmpty())
             AudioPlayer->setObjectName(QString::fromUtf8("AudioPlayer"));
-        AudioPlayer->resize(900, 600);
-        AudioPlayer->setMinimumSize(QSize(900, 600));
-        AudioPlayer->setMaximumSize(QSize(900, 600));
+        AudioPlayer->resize(900, 560);
+        AudioPlayer->setMinimumSize(QSize(900, 560));
+        AudioPlayer->setMaximumSize(QSize(900, 560));
         QIcon icon;
         icon.addFile(QString::fromUtf8(":/imgs/icon.png"), QSize(), QIcon::Normal, QIcon::Off);
         AudioPlayer->setWindowIcon(icon);
@@ -75,28 +70,6 @@ public:
         formLayout->setContentsMargins(11, 11, 11, 11);
         formLayout->setObjectName(QString::fromUtf8("formLayout"));
         formLayout->setContentsMargins(0, 0, 0, 0);
-        lcd = new QLCDNumber(layoutWidget);
-        lcd->setObjectName(QString::fromUtf8("lcd"));
-        lcd->setStyleSheet(QString::fromUtf8("QLCDNumber{\n"
-"background-color: rgb(0, 0, 0);\n"
-"color: rgb(255, 255, 255);\n"
-"}"));
-        lcd->setDigitCount(8);
-
-        formLayout->setWidget(3, QFormLayout::LabelRole, lcd);
-
-        progressBar = new QProgressBar(layoutWidget);
-        progressBar->setObjectName(QString::fromUtf8("progressBar"));
-        progressBar->setEnabled(true);
-        progressBar->setMaximumSize(QSize(760, 16777215));
-        progressBar->setStyleSheet(QString::fromUtf8("QProgressBar{\n"
-"background-color:black;\n"
-"}"));
-        progressBar->setValue(0);
-        progressBar->setTextVisible(false);
-
-        formLayout->setWidget(3, QFormLayout::FieldRole, progressBar);
-
         bt_stop = new QPushButton(layoutWidget);
         bt_stop->setObjectName(QString::fromUtf8("bt_stop"));
         bt_stop->setStyleSheet(QString::fromUtf8("QPushButton{\n"
@@ -120,6 +93,22 @@ public:
         bt_play->setIcon(icon2);
 
         formLayout->setWidget(5, QFormLayout::LabelRole, bt_play);
+
+        lcd = new QLCDNumber(layoutWidget);
+        lcd->setObjectName(QString::fromUtf8("lcd"));
+        lcd->setStyleSheet(QString::fromUtf8("QLCDNumber{\n"
+"background-color: rgb(0, 0, 0);\n"
+"color: rgb(255, 255, 255);\n"
+"}"));
+        lcd->setDigitCount(8);
+
+        formLayout->setWidget(3, QFormLayout::LabelRole, lcd);
+
+        sl_tracking = new QSlider(layoutWidget);
+        sl_tracking->setObjectName(QString::fromUtf8("sl_tracking"));
+        sl_tracking->setOrientation(Qt::Horizontal);
+
+        formLayout->setWidget(3, QFormLayout::FieldRole, sl_tracking);
 
         lb_screen = new QLabel(layoutWidget);
         lb_screen->setObjectName(QString::fromUtf8("lb_screen"));
@@ -151,15 +140,6 @@ public:
 "color: rgb(255, 255, 255);\n"
 "}"));
         AudioPlayer->setCentralWidget(centralWidget);
-        mainToolBar = new QToolBar(AudioPlayer);
-        mainToolBar->setObjectName(QString::fromUtf8("mainToolBar"));
-        AudioPlayer->addToolBar(Qt::TopToolBarArea, mainToolBar);
-        statusBar = new QStatusBar(AudioPlayer);
-        statusBar->setObjectName(QString::fromUtf8("statusBar"));
-        statusBar->setStyleSheet(QString::fromUtf8("QStatusBar{\n"
-"color: rgb(255, 255, 255);\n"
-"}"));
-        AudioPlayer->setStatusBar(statusBar);
 
         retranslateUi(AudioPlayer);
 
