@@ -11,36 +11,24 @@ AudioPlayer::AudioPlayer(QWidget *parent) : QMainWindow(parent), ui(new Ui::Audi
 
     ui->setupUi(this);
 
-    player = new QMediaPlayer();
-    vw = new QVideoWidget(this);
+    this->player = new QMediaPlayer(this);
+    this->vw = new QVideoWidget(this);
+    this->player->setVideoOutput(this->vw);
 
-    init();
+    this->vw->setGeometry(117, 80, ui->lb_screen->width(), ui->lb_screen->height());
+    this->vw->hide();
+
+    this->player->setVolume(ui->sl_volume->value());
+
+    connect(player, &QMediaPlayer::durationChanged, ui->sl_tracking, &QSlider::setMaximum);
+    connect(player, &QMediaPlayer::positionChanged, ui->sl_tracking, &QSlider::setValue);
+    connect(player, &QMediaPlayer::positionChanged, this, &AudioPlayer::positionChanged);
+    connect(ui->sl_tracking, &QSlider::sliderMoved, player, &QMediaPlayer::setPosition);
 
     ui->lcd->display("00:00:00");
 
     ui->bt_stop->setEnabled(false);
     ui->bt_play->setEnabled(false);
-}
-
-void AudioPlayer::init(QString path){
-    delete vw;
-    delete player;
-
-    player = new QMediaPlayer();
-    vw = new QVideoWidget(this);
-
-    if(player->isVideoAvailable()){
-        player->setVideoOutput(vw);
-        vw->setGeometry(ui->lb_screen->geometry());
-        vw->show();
-    }
-
-
-    player->setMedia(QUrl::fromLocalFile(path));
-    player->setVolume(ui->sl_volume->value());
-
-    connect(player, SIGNAL(positionChanged(qint64)), this, SLOT(positionChanged(qint64)));
-    connect(player, SIGNAL(audioAvailableChanged(bool)), this, SLOT(stopSong(bool)));
 }
 
 AudioPlayer::~AudioPlayer(){
@@ -52,10 +40,30 @@ AudioPlayer::~AudioPlayer(){
 
 
 void AudioPlayer::on_bt_stop_clicked(){
-    this->stopSong(false);
+
+    ui->sl_tracking->setValue(0);
+    player->stop();
+    ui->bt_play->setText("Play");
+    ui->bt_play->setIcon(QIcon(":/imgs/play.png"));
+
+    this->isPlaying = false;
+
+    ui->bt_stop->setEnabled(false);
+
+
+    ui->lcd->display(QString::fromStdString("00:00:00"));
+
 }
 
 void AudioPlayer::on_bt_play_clicked(){
+    if(this->player->isVideoAvailable()){
+        ui->lb_screen->clear();
+        this->vw->show();
+
+    }else{
+        this->vw->close();
+        ui->lb_screen->setPixmap(QPixmap(":/imgs/icon.png"));
+    }
 
     if(this->isPlaying == true){
         player->pause();
@@ -77,7 +85,7 @@ void AudioPlayer::on_bt_load_clicked(){
         return;
     }
 
-    init(filename);
+    this->player->setMedia(QUrl::fromLocalFile(filename));
 
     ui->bt_play->setEnabled(true);
     on_bt_stop_clicked();
@@ -101,22 +109,6 @@ void AudioPlayer::positionChanged(qint64 value){
         query = "00:00:00";
     }
     ui->lcd->display(query);
-    ui->progressBar->setValue(((100*value)/player->duration()));
-}
-
-void AudioPlayer::stopSong(bool stop){
-    if(!stop){
-        player->stop();
-        ui->bt_play->setText("Play");
-
-        this->isPlaying = false;
-
-        ui->bt_stop->setEnabled(false);
-        ui->progressBar->setValue(0);
-
-        ui->lcd->display(QString::fromStdString("00:00:00"));
-    }
-
 }
 
 void AudioPlayer::on_sl_volume_valueChanged(int value){
